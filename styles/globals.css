@@ -1,0 +1,21 @@
+body {
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.card {
+  transition: box-shadow 0.2s;
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #e0e7ef;
+}
+::-webkit-scrollbar-thumb {
+  background: #b0b8c1;
+  border-radius: 4px;
+} 
