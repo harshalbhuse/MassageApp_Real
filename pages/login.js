@@ -33,7 +33,7 @@ const LoginPage = () => {
       );
       localStorage.setItem('user_id', res.data.user_id);
       // On success, redirect to home page
-      window.location.href = '/';
+      window.location.href = '/home';
     } catch (err) {
       setError('Invalid username or password. Please try again.');
     } finally {
