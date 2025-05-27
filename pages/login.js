@@ -32,8 +32,8 @@ const LoginPage = () => {
         { headers: { 'Content-Type': 'application/json' } }
       );
       localStorage.setItem('user_id', res.data.user_id);
-      // On success, redirect to users page
-      window.location.href = '/users';
+      // On success, redirect to home page
+      window.location.href = '/';
     } catch (err) {
       setError('Invalid username or password. Please try again.');
     } finally {
