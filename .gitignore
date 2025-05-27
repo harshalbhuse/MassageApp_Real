@@ -16,6 +16,44 @@
 # misc
 .DS_Store
 *.pem
+*.log
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pdf
+*.mp3
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.flv
+*.mkv
+*.iso
+*.img
+*.vmdk
+*.vhd
+*.vhdx
+*.ova
+*.ovf
+*.qcow2
+*.raw
+*.bin
+*.exe
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.msi
+*.apk
+*.ipa
+*.app
+*.dll
+*.so
+*.dylib
+*.jar
+*.war
+*.ear
 
 # debug
 npm-debug.log*
@@ -24,6 +62,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -52,4 +91,20 @@ sdist/
 var/
 *.egg-info/
 .installed.cfg
-*.egg 
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db 
