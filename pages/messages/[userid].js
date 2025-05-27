@@ -5,6 +5,7 @@ import axios from 'axios';
 import MessageList from '../../components/MessageList';
 import ImageModal from '../../components/ImageModal';
 import FileUpload from '../../components/FileUpload';
+import DashboardLayout from '../../components/DashboardLayout';
 
 const MessagesPage = () => {
   const router = useRouter();
@@ -86,37 +87,39 @@ const MessagesPage = () => {
   };
 
   return (
-    <Container className="py-4 d-flex justify-content-center align-items-center" style={{ minHeight: '90vh' }}>
-      <Card style={{ width: '100%', maxWidth: 600, minHeight: 500, boxShadow: '0 4px 32px rgba(0,0,0,0.10)', borderRadius: 18, background: '#f7fafd' }}>
-        <Card.Header className="d-flex align-items-center justify-content-between bg-white" style={{ borderTopLeftRadius: 18, borderTopRightRadius: 18, borderBottom: '1px solid #e0e7ef' }}>
-          <div className="fw-bold fs-5 text-primary">{friendName || 'Messages'}</div>
-          <Button variant="outline-secondary" size="sm" onClick={() => router.back()}>&larr; Back</Button>
-        </Card.Header>
-        <Card.Body style={{ padding: 0, display: 'flex', flexDirection: 'column', height: 400 }}>
-          {loading && <div className="text-center my-5"><Spinner animation="border" /></div>}
-          {error && <Alert variant="danger">{error}</Alert>}
-          {!loading && !error && !isFriend && (
-            <Alert variant="warning" className="m-4">You must be friends to chat with this user.</Alert>
-          )}
-          {!loading && !error && messages.length === 0 && isFriend && (
-            <Alert variant="info" className="m-4">No messages from this user yet.</Alert>
-          )}
-          {!loading && !error && messages.length > 0 && isFriend && (
-            <div style={{ flex: 1, overflowY: 'auto', background: '#ece5dd', borderRadius: 12, margin: 12, marginBottom: 0 }}>
-              <MessageList
-                messages={messages}
-                currentUserId={currentUserId}
-                onImageClick={handleImageClick}
-              />
-            </div>
-          )}
-        </Card.Body>
-        <Card.Footer className="bg-white" style={{ borderBottomLeftRadius: 18, borderBottomRightRadius: 18, borderTop: '1px solid #e0e7ef' }}>
-          {isFriend && <FileUpload onSend={handleSendMessage} loading={sending} />}
-        </Card.Footer>
-      </Card>
-      <ImageModal show={showImage} imageUrl={imageUrl} onHide={() => setShowImage(false)} />
-    </Container>
+    <DashboardLayout>
+      <Container className="py-4 d-flex justify-content-center align-items-center" style={{ minHeight: '90vh' }}>
+        <Card style={{ width: '100%', maxWidth: 600, minHeight: 500, boxShadow: '0 4px 32px rgba(0,0,0,0.10)', borderRadius: 18, background: '#f7fafd' }}>
+          <Card.Header className="d-flex align-items-center justify-content-between bg-white" style={{ borderTopLeftRadius: 18, borderTopRightRadius: 18, borderBottom: '1px solid #e0e7ef' }}>
+            <div className="fw-bold fs-5 text-primary">{friendName || 'Messages'}</div>
+            <Button variant="outline-secondary" size="sm" onClick={() => router.back()}>&larr; Back</Button>
+          </Card.Header>
+          <Card.Body style={{ padding: 0, display: 'flex', flexDirection: 'column', height: 400 }}>
+            {loading && <div className="text-center my-5"><Spinner animation="border" /></div>}
+            {error && <Alert variant="danger">{error}</Alert>}
+            {!loading && !error && !isFriend && (
+              <Alert variant="warning" className="m-4">You must be friends to chat with this user.</Alert>
+            )}
+            {!loading && !error && messages.length === 0 && isFriend && (
+              <Alert variant="info" className="m-4">No messages from this user yet.</Alert>
+            )}
+            {!loading && !error && messages.length > 0 && isFriend && (
+              <div style={{ flex: 1, overflowY: 'auto', background: '#ece5dd', borderRadius: 12, margin: 12, marginBottom: 0 }}>
+                <MessageList
+                  messages={messages}
+                  currentUserId={currentUserId}
+                  onImageClick={handleImageClick}
+                />
+              </div>
+            )}
+          </Card.Body>
+          <Card.Footer className="bg-white" style={{ borderBottomLeftRadius: 18, borderBottomRightRadius: 18, borderTop: '1px solid #e0e7ef' }}>
+            {isFriend && <FileUpload onSend={handleSendMessage} loading={sending} />}
+          </Card.Footer>
+        </Card>
+        <ImageModal show={showImage} imageUrl={imageUrl} onHide={() => setShowImage(false)} />
+      </Container>
+    </DashboardLayout>
   );
 };
 

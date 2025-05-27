@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.contrib.auth import authenticate, get_user_model
 from .models import User, Message, File, FriendRequest
-from .serializers import UserSerializer, MessageSerializer, FriendRequestSerializer
+from .serializers import UserSerializer, MessageSerializer, FriendRequestSerializer, ProfileSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse
@@ -14,6 +14,8 @@ from datetime import datetime
 import os
 from django.conf import settings
 from django.db.models import Q
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 
@@ -273,3 +275,34 @@ class FriendsListView(APIView):
         users = User.objects.filter(id__in=friend_ids)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
+
+class ProfileView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        user_id = request.GET.get('user_id')
+        if not user_id:
+            return Response({'error': 'user_id required'}, status=400)
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = ProfileSerializer(user, context={'request': request})
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ProfileUpdateView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [AllowAny]
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({'error': 'user_id required'}, status=400)
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+        serializer = ProfileSerializer(user, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)

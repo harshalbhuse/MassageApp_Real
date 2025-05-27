@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
 class User(AbstractUser):
+    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
     pass  # You can extend this if needed
 
 class Message(models.Model):

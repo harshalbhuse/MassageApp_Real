@@ -22,4 +22,19 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     receiver_username = serializers.CharField(source='receiver.username', read_only=True)
     class Meta:
         model = FriendRequest
-        fields = ['id', 'sender', 'sender_username', 'receiver', 'receiver_username', 'status', 'timestamp'] 
+        fields = ['id', 'sender', 'sender_username', 'receiver', 'receiver_username', 'status', 'timestamp']
+
+class ProfileSerializer(serializers.ModelSerializer):
+    profile_photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile_photo', 'profile_photo_url']
+
+    def get_profile_photo_url(self, obj):
+        request = self.context.get('request')
+        if obj.profile_photo and hasattr(obj.profile_photo, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.profile_photo.url)
+            return obj.profile_photo.url
+        return None 
