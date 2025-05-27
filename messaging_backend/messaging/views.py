@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.contrib.auth import authenticate, get_user_model
-from .models import User, Message, File
-from .serializers import UserSerializer, MessageSerializer
+from .models import User, Message, File, FriendRequest
+from .serializers import UserSerializer, MessageSerializer, FriendRequestSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse
@@ -215,3 +215,61 @@ def signup_view(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+class FriendRequestView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        user_id = int(request.GET.get('user_id', 1))
+        incoming = FriendRequest.objects.filter(receiver_id=user_id, status='pending')
+        outgoing = FriendRequest.objects.filter(sender_id=user_id, status='pending')
+        serializer_in = FriendRequestSerializer(incoming, many=True)
+        serializer_out = FriendRequestSerializer(outgoing, many=True)
+        return Response({'incoming': serializer_in.data, 'outgoing': serializer_out.data})
+
+    def post(self, request):
+        sender_id = request.data.get('sender_id')
+        receiver_id = request.data.get('receiver_id')
+        if sender_id == receiver_id:
+            return Response({'error': 'Cannot send request to yourself'}, status=400)
+        if FriendRequest.objects.filter(sender_id=sender_id, receiver_id=receiver_id).exists():
+            return Response({'error': 'Request already sent'}, status=400)
+        fr = FriendRequest.objects.create(sender_id=sender_id, receiver_id=receiver_id)
+        serializer = FriendRequestSerializer(fr)
+        return Response(serializer.data)
+
+class FriendRequestActionView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        req_id = request.data.get('request_id')
+        action = request.data.get('action')  # 'accept' or 'reject'
+        try:
+            fr = FriendRequest.objects.get(id=req_id)
+            if action == 'accept':
+                fr.status = 'accepted'
+                fr.save()
+            elif action == 'reject':
+                fr.status = 'rejected'
+                fr.save()
+            else:
+                return Response({'error': 'Invalid action'}, status=400)
+            return Response({'success': True, 'status': fr.status})
+        except FriendRequest.DoesNotExist:
+            return Response({'error': 'Request not found'}, status=404)
+
+class FriendsListView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        user_id = int(request.GET.get('user_id', 1))
+        accepted = FriendRequest.objects.filter(
+            (Q(sender_id=user_id) | Q(receiver_id=user_id)),
+            status='accepted'
+        )
+        friend_ids = set()
+        for fr in accepted:
+            if fr.sender_id == user_id:
+                friend_ids.add(fr.receiver_id)
+            else:
+                friend_ids.add(fr.sender_id)
+        users = User.objects.filter(id__in=friend_ids)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)

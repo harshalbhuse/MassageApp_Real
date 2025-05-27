@@ -6,6 +6,7 @@ body {
 
 .card {
   transition: box-shadow 0.2s;
+  margin-bottom: 1.5rem;
 }
 .card:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
@@ -18,4 +19,9 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #b0b8c1;
   border-radius: 4px;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+  background: #e0e7ef;
+  color: #2563eb !important;
 } 

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LoginView, UserListView, MessageListView, root_view, message_view, signup_view
+from .views import LoginView, UserListView, MessageListView, root_view, message_view, signup_view, FriendRequestView, FriendRequestActionView, FriendsListView
 
 urlpatterns = [
     path('', root_view),
@@ -8,4 +8,8 @@ urlpatterns = [
     path('user/<int:user_id>/message', MessageListView.as_view()),
     path('message', message_view),
     path('signup', signup_view),
+    path('friend-request', FriendRequestView.as_view()),
+    path('friend-request/action', FriendRequestActionView.as_view()),
+    path('friends', FriendsListView.as_view()),
 ] 
+

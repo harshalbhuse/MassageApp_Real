@@ -11,20 +11,20 @@ const UsersPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchFriends = async () => {
       setLoading(true);
       setError('');
       try {
         const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
-        const res = await axios.get(`http://localhost:8000/api/users?user_id=${userId}`);
+        const res = await axios.get(`http://localhost:8000/friends?user_id=${userId}`);
         setUsers(res.data);
       } catch (err) {
-        setError('Failed to load users.');
+        setError('Failed to load friends.');
       } finally {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchFriends();
   }, []);
 
   const handleUserClick = (userId) => {
@@ -33,7 +33,7 @@ const UsersPage = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Users Who Messaged You</h2>
+      <h2 className="mb-4">Your Friends</h2>
       {loading && <div className="text-center my-5"><Spinner animation="border" /></div>}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && (
