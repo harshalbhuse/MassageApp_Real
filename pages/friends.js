@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 
 export default function Friends() {
-  // TODO: Replace with real logged-in user ID
-  const currentUserId = 1;
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,6 +14,12 @@ export default function Friends() {
   const router = useRouter();
 
   useEffect(() => {
+    const userId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
+    setCurrentUserId(userId ? parseInt(userId) : null);
+  }, []);
+
+  useEffect(() => {
+    if (!currentUserId) return;
     setLoading(true);
     Promise.all([
       axios.get('http://localhost:8000/users'),
@@ -31,7 +36,7 @@ export default function Friends() {
         setError('Failed to load users or requests');
         setLoading(false);
       });
-  }, []);
+  }, [currentUserId]);
 
   const handleSendRequest = (userId) => {
     setActionLoading(l => ({ ...l, [userId]: true }));

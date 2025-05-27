@@ -57,11 +57,8 @@ class LoginView(APIView):
 class UserListView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
-        # For demo, assume user_id=1 is logged in
         logged_in_user_id = int(request.GET.get('user_id', 1))
-        messages = Message.objects.filter(receiver_id=logged_in_user_id)
-        senders = set(messages.values_list('sender_id', flat=True))
-        users = User.objects.filter(id__in=senders)
+        users = User.objects.exclude(id=logged_in_user_id)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
